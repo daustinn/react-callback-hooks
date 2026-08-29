@@ -8,6 +8,7 @@
   "workspaces": [
     "site"
   ],
+  "homepage": "https://react-callback-hooks.daustinn.com",
   "sideEffects": false,
   "files": [
     "dist"
