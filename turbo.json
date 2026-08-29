@@ -16,6 +16,8 @@
     "//#build": {
       "outputs": ["dist/**"]
     },
+    "lint": {},
+    "//#lint": {},
     "preview": {
       "persistent": true,
       "cache": false

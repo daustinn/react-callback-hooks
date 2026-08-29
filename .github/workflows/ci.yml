@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -22,7 +26,7 @@ jobs:
         run: bun install
 
       - name: Build
-        run: bun run build && bun turbo run build
+        run: bun turbo run build
 
       - name: Lint
-        run: bun run lint && bun turbo run lint
+        run: bun turbo run lint
