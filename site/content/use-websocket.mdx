@@ -1,0 +1,72 @@
+---
+title: useWebSocket
+description: React hook to manage WebSocket connections with auto-reconnect, message handlers, and connection state callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseWebSocket />
+
+### Usage
+
+Simple — URL + optional onMessage callback:
+
+```tsx
+import { useWebSocket } from 'react-callback-hooks'
+
+const { send, readyState, lastMessage } = useWebSocket(
+  'wss://example.com/ws',
+  (event) => console.log('received', event.data)
+)
+```
+
+Object form — full control:
+
+```tsx
+const { send, disconnect, readyState, lastMessage } = useWebSocket({
+  url: 'wss://example.com/ws',
+  reconnect: true,
+  reconnectDelay: 3_000,
+  onMessage: (event) => console.log('received', event.data),
+  onOpen: (event) => console.log('connected'),
+  onClose: (event) => console.log('disconnected'),
+  onError: (event) => console.error('error', event)
+})
+
+send('hello')
+disconnect()
+```
+
+### Parameters
+
+#### Simple form
+
+| Parameter   | Type                            | Description                               |
+| ----------- | ------------------------------- | ----------------------------------------- |
+| `url`       | `string`                        | WebSocket server URL.                     |
+| `onMessage` | `(event: MessageEvent) => void` | Optional. Fires on each incoming message. |
+
+#### Object form
+
+| Property         | Type                            | Default | Description                                                    |
+| ---------------- | ------------------------------- | ------- | -------------------------------------------------------------- |
+| `url`            | `string`                        | —       | WebSocket server URL. Changing this reconnects to the new URL. |
+| `onMessage`      | `(event: MessageEvent) => void` | —       | Fires on each incoming message.                                |
+| `onOpen`         | `(event: Event) => void`        | —       | Fires when the connection opens.                               |
+| `onClose`        | `(event: CloseEvent) => void`   | —       | Fires when the connection closes.                              |
+| `onError`        | `(event: Event) => void`        | —       | Fires on connection error.                                     |
+| `reconnect`      | `boolean`                       | `false` | Automatically reconnect after the connection closes.           |
+| `reconnectDelay` | `number`                        | `3000`  | Delay in ms before attempting to reconnect.                    |
+
+### Return Values
+
+| Property      | Type                                    | Description                                              |
+| ------------- | --------------------------------------- | -------------------------------------------------------- |
+| `send`        | `(data: string \| Blob \| ...) => void` | Sends data. No-op if the socket is not open.             |
+| `disconnect`  | `() => void`                            | Closes the connection and cancels any pending reconnect. |
+| `readyState`  | `0 \| 1 \| 2 \| 3`                      | `CONNECTING \| OPEN \| CLOSING \| CLOSED`.               |
+| `lastMessage` | `MessageEvent \| null`                  | The most recent message event.                           |

@@ -1,0 +1,62 @@
+---
+title: useClickOutside
+description: React hook to detect clicks and touches outside a referenced element with customizable event listeners and callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseClickOutside />
+
+### Usage
+
+Simple — fires when the user clicks outside the ref'd element:
+
+```tsx
+import { useClickOutside } from 'react-callback-hooks'
+
+const ref = useClickOutside(() => setOpen(false))
+
+<div ref={ref}>
+  <Menu />
+</div>
+```
+
+Object form — custom events:
+
+```tsx
+const ref = useClickOutside({
+  onClick: (event) => {
+    console.log('clicked outside', event.target)
+    setOpen(false)
+  },
+  events: ['mousedown', 'touchstart'],
+})
+```
+
+### Parameters
+
+#### Simple form
+
+| Parameter | Type | Description |
+|---|---|---|
+| `callback` | `(event: MouseEvent \| TouchEvent) => void` | Fires when a click or touch occurs outside the ref'd element. |
+
+#### Object form
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `onClick` | `(event: MouseEvent \| TouchEvent) => void` | — | Fires when a click or touch occurs outside the ref'd element. |
+| `events` | `string[]` | `['mousedown', 'touchstart']` | DOM events to listen for. |
+
+### Return Values
+
+Returns a `React.RefObject<T>`. Attach it to the element you want to treat as the boundary.
+
+```tsx
+const ref = useClickOutside<HTMLDivElement>(() => close())
+<div ref={ref} />
+```

@@ -1,0 +1,78 @@
+---
+title: useDebounce
+description: React hook to debounce state updates and function calls with custom delay, immediate value tracking, and change callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseDebounce />
+
+### Usage
+
+Shorthand — callback + delay:
+
+```tsx
+import { useDebounce } from 'react-callback-hooks'
+
+export default function SearchInput() {
+  const [debouncedValue, setValue, immediateValue] = useDebounce(
+    (searchTerm) => {
+      fetchResults(searchTerm)
+    },
+    500
+  )
+
+  return (
+    <input
+      value={immediateValue ?? ''}
+      placeholder="Search..."
+      onChange={(e) => setValue(e.target.value)}
+    />
+  )
+}
+```
+
+Object form — full configuration:
+
+```tsx
+import { useDebounce } from 'react-callback-hooks'
+
+const [debouncedQuery, setQuery, currentQuery] = useDebounce({
+  delay: 400,
+  defaultValue: '',
+  onChange: (value) => console.log('Immediate keystroke:', value),
+  onDebounced: (value) => console.log('Debounced search:', value)
+})
+```
+
+### Parameters
+
+#### Shorthand form
+
+| Parameter  | Type                 | Default | Description                                                   |
+| ---------- | -------------------- | ------- | ------------------------------------------------------------- |
+| `callback` | `(value: T) => void` | —       | Callback invoked once `delay` ms have passed without changes. |
+| `delay`    | `number`             | `500`   | Debounce delay in milliseconds.                               |
+
+#### Object form
+
+| Property       | Type                 | Default     | Description                                             |
+| -------------- | -------------------- | ----------- | ------------------------------------------------------- |
+| `delay`        | `number`             | `500`       | Debounce delay in milliseconds.                         |
+| `onDebounced`  | `(value: T) => void` | —           | Callback fired after the debounced delay elapses.       |
+| `onChange`     | `(value: T) => void` | —           | Immediate callback fired whenever `setValue` is called. |
+| `defaultValue` | `T`                  | `undefined` | Initial value for both immediate and debounced state.   |
+
+### Return Values
+
+Returns a tuple `[debouncedValue, setValue, immediateValue]`:
+
+| Index            | Type                 | Description                                                       |
+| ---------------- | -------------------- | ----------------------------------------------------------------- |
+| `debouncedValue` | `T \| undefined`     | The value updated only after the debounce delay expires.          |
+| `setValue`       | `(value: T) => void` | Setter function to update the value and start the debounce timer. |
+| `immediateValue` | `T \| undefined`     | The immediate, un-debounced value (useful for controlled inputs). |

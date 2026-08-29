@@ -1,0 +1,44 @@
+---
+import { DAUSTINN, RCH } from '#/const'
+import ByDaustinn from '#/assets/by-daustinn.svg'
+---
+
+<footer>
+  <nav
+    aria-label="Footer navigation"
+    class="container flex gap-7 pb-5 pt-20 [&>a]:hover:underline text-sm"
+  >
+    <a
+      href={RCH.githubURL}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="GitHub profile"
+    >
+      Github
+    </a>
+    <a
+      href={RCH.npmURL}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="NPM package"
+    >
+      NPM
+    </a>
+    <a
+      href={DAUSTINN.bmc}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Buy Me a Coffee"
+    >
+      BMC
+    </a>
+    <a
+      href={DAUSTINN.site}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Daustinn"
+    >
+      Daustinn
+    </a>
+  </nav>
+</footer>

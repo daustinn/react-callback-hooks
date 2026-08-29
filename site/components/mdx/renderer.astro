@@ -1,0 +1,62 @@
+---
+import { evaluate } from '@mdx-js/mdx'
+import remarkGfm from 'remark-gfm'
+import * as runtime from 'react/jsx-runtime'
+import { getNodeData, type NodeFolder, type NodePage } from 'slugtree'
+import MDXComponents from '#/components/mdx/components'
+import Hydrator from '#/components/demos/hydrator'
+
+export interface Props {
+  node: NodePage | NodeFolder
+}
+
+const { node } = Astro.props
+const data = getNodeData(node.slug)
+let Content = null
+
+if (data) {
+  const result = await evaluate(data.rawContent, {
+    ...runtime,
+    remarkPlugins: [remarkGfm],
+    baseUrl: import.meta.url
+  })
+  Content = result.default
+}
+---
+
+{Content && <Content components={MDXComponents} env={import.meta.env} />}
+<Hydrator client:load />
+
+<script>
+  import { $$, $ } from '#/lib/dom'
+
+  const $blockCodeButtons = $$('.blockcode__button')
+  const $$blockCodes = $$('.blockcode')
+
+  $blockCodeButtons.forEach(($button) => {
+    $button.addEventListener('click', () => {
+      const code = $button.getAttribute('data-code')
+      if (code) navigator.clipboard.writeText(code)
+
+      $button.textContent = 'Copied!'
+      setTimeout(() => {
+        $button.textContent = 'Copy'
+      }, 2000)
+    })
+  })
+
+  $$blockCodes.forEach(($code) => {
+    const height = $code.scrollHeight
+
+    const $triggerButton = $('.blockcode__expandButton', $code)
+    if (!$triggerButton) return
+
+    if (height >= 400) {
+      $triggerButton.style.display = 'block'
+      $triggerButton.addEventListener('click', () => {
+        const expanded = $code.getAttribute('aria-expanded') === 'true'
+        $code.setAttribute('aria-expanded', expanded ? 'false' : 'true')
+      })
+    }
+  })
+</script>

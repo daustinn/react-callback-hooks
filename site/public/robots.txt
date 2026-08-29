@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://react-callback-hooks.daustinn.com/sitemap-index.xml

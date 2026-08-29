@@ -1,0 +1,83 @@
+---
+title: useMutation
+description: React hook to execute asynchronous mutations with loading, error, and data states alongside success and error callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseMutation />
+
+### Usage
+
+Shorthand — mutationFn + optional callbacks:
+
+```tsx
+import { useMutation } from 'react-callback-hooks'
+
+type NewPost = { title: string; body: string }
+type Post = NewPost & { id: number }
+
+const [createPost, { data, loading, error, reset }] = useMutation<
+  Post,
+  NewPost
+>(
+  (variables) =>
+    fetch('/api/posts', {
+      method: 'POST',
+      body: JSON.stringify(variables)
+    }).then((r) => r.json()),
+  {
+    onSuccess: (data, variables) => console.log('created', data.id),
+    onError: (err, variables) => console.error(err)
+  }
+)
+
+createPost({ title: 'Hello', body: 'World' })
+```
+
+Object form:
+
+```tsx
+const [deleteUser, state] = useMutation<void, number>({
+  mutationFn: (id) =>
+    fetch(`/api/users/${id}`, { method: 'DELETE' }).then((r) => r.json()),
+  onSuccess: (_, id) => console.log('deleted', id),
+  onError: (err) => console.error(err)
+})
+
+deleteUser(42)
+```
+
+### Parameters
+
+#### Shorthand form
+
+| Parameter             | Type                                   | Description                                |
+| --------------------- | -------------------------------------- | ------------------------------------------ |
+| `mutationFn`          | `(variables: V) => Promise<T>`         | Async function that performs the mutation. |
+| `callbacks.onSuccess` | `(data: T, variables: V) => void`      | Called when the mutation resolves.         |
+| `callbacks.onError`   | `(error: Error, variables: V) => void` | Called when the mutation rejects.          |
+
+#### Object form
+
+| Property     | Type                                   | Description                                |
+| ------------ | -------------------------------------- | ------------------------------------------ |
+| `mutationFn` | `(variables: V) => Promise<T>`         | Async function that performs the mutation. |
+| `onSuccess`  | `(data: T, variables: V) => void`      | Called when the mutation resolves.         |
+| `onError`    | `(error: Error, variables: V) => void` | Called when the mutation rejects.          |
+
+### Return Values
+
+Returns a tuple `[mutate, state]`:
+
+|                 | Type                              | Description                                                   |
+| --------------- | --------------------------------- | ------------------------------------------------------------- |
+| `mutate`        | `(variables: V) => Promise<void>` | Triggers the mutation with the given variables.               |
+| `state.data`    | `T \| null`                       | Last resolved value, or `null` before first success.          |
+| `state.loading` | `boolean`                         | `true` while the mutation is in flight.                       |
+| `state.error`   | `Error \| null`                   | Last error, or `null` if the last call succeeded.             |
+| `state.reset`   | `() => void`                      | Resets `data`, `loading` and `error` to their initial values. |

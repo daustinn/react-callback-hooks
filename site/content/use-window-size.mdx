@@ -1,0 +1,68 @@
+---
+title: useWindowSize
+description: React hook to measure window or element dimensions with responsive resize listeners and reactive callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseWindowSize />
+
+### Usage
+
+Window dimensions:
+
+```tsx
+import { useWindowSize } from 'react-callback-hooks'
+
+const [size] = useWindowSize((size) => {
+  console.log('Window resized to', size.width, size.height)
+})
+```
+
+Element dimensions via `ref`:
+
+```tsx
+const [size, ref] = useWindowSize<HTMLDivElement>((size) => {
+  console.log('Element resized to', size.width, size.height)
+})
+
+<div ref={ref} />
+```
+
+Object form:
+
+```tsx
+const [size, ref] = useWindowSize<HTMLDivElement>({
+  onChange: (size) => console.log('Changed', size),
+  onResize: (size) => console.log('Resized', size),
+})
+```
+
+### Parameters
+
+#### Simple form
+
+| Parameter | Type | Description |
+|---|---|---|
+| `callback` | `(size: WindowSize) => void` | Optional. Called whenever the window or referenced element is resized. |
+
+#### Object form
+
+| Property | Type | Description |
+|---|---|---|
+| `onChange` | `(size: WindowSize) => void` | Called whenever the window or referenced element is resized. |
+| `onResize` | `(size: WindowSize) => void` | Alias for `onChange`. |
+
+### Return Values
+
+Returns a tuple `[size, ref]`:
+
+| | Type | Description |
+|---|---|---|
+| `size.width` | `number` | Current width in pixels. |
+| `size.height` | `number` | Current height in pixels. |
+| `ref` | `React.RefObject<T>` | Optional ref to measure and observe a specific element instead of the window. |

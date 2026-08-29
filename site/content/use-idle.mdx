@@ -1,0 +1,53 @@
+---
+title: useIdle
+description: React hook to detect user inactivity, track idle status, and trigger callbacks on idle and active state changes.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseIdle />
+
+### Usage
+
+Simple — single callback fires when the user goes idle:
+
+```tsx
+import { useIdle } from 'react-callback-hooks'
+
+const isIdle = useIdle(30_000, () => {
+  console.log('user is idle')
+})
+```
+
+Object form — separate idle/active callbacks with custom events:
+
+```tsx
+const isIdle = useIdle(30_000, {
+  onIdle: () => console.log('went idle'),
+  onActive: () => console.log('became active'),
+  events: ['mousemove', 'keydown', 'touchstart']
+})
+```
+
+### Parameters
+
+| Parameter  | Type         | Description                                         |
+| ---------- | ------------ | --------------------------------------------------- |
+| `timeout`  | `number`     | Inactivity duration in ms before `onIdle` fires.    |
+| `callback` | `() => void` | Simple form. Fires once when the user becomes idle. |
+
+Object form second argument:
+
+| Property   | Type         | Default                                                                       | Description                                             |
+| ---------- | ------------ | ----------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `onIdle`   | `() => void` | —                                                                             | Fires when the user has been inactive for `timeout` ms. |
+| `onActive` | `() => void` | —                                                                             | Fires when the user interacts again after being idle.   |
+| `events`   | `string[]`   | `['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel', 'pointermove']` | DOM events that reset the idle timer.                   |
+
+### Return Values
+
+Returns `isIdle: boolean` — `true` while the user is idle.

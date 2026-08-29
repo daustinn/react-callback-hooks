@@ -1,0 +1,68 @@
+---
+title: useBattery
+description: React hook to track device battery level, charging status, and charging time with event callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseBattery />
+
+### Usage
+
+```tsx
+import { useBattery } from 'react-callback-hooks'
+
+export default function BatteryIndicator() {
+  const battery = useBattery({
+    onLevelChange: (level, { charging }) => {
+      console.log(`Battery level changed to ${level}%`)
+    },
+    onChargingChange: (charging, { level }) => {
+      console.log(charging ? 'Charger connected' : 'Charger disconnected')
+    },
+    onSupported: (supported) => {
+      if (!supported)
+        console.warn('Battery API is not supported in this browser')
+    }
+  })
+
+  if (battery.loading) return <p>Loading battery status...</p>
+  if (!battery.supported) return <p>Battery API not supported</p>
+
+  return (
+    <div>
+      <p>Level: {battery.level}%</p>
+      <p>Status: {battery.charging ? 'Charging' : 'On Battery'}</p>
+    </div>
+  )
+}
+```
+
+### Parameters
+
+| Property                  | Type                                                      | Default | Description                                                     |
+| ------------------------- | --------------------------------------------------------- | ------- | --------------------------------------------------------------- |
+| `onLevelChange`           | `(level: number, battery: { charging: boolean }) => void` | —       | Called when the battery level changes. `level` is `0`–`100`.    |
+| `onChargingChange`        | `(charging: boolean, battery: { level: number }) => void` | —       | Called when device starts or stops charging.                    |
+| `onChargingTimeChange`    | `(chargingTime: number, battery: Pick<...>) => void`      | —       | Called when estimated time to full charge changes (in seconds). |
+| `onDischargingTimeChange` | `(dischargingTime: number, battery: Pick<...>) => void`   | —       | Called when estimated time until empty changes (in seconds).    |
+| `onSupported`             | `(supported: boolean) => void`                            | —       | Called once upon initialization indicating browser support.     |
+
+### Return Values
+
+Returns a `BatteryState` object:
+
+| Property          | Type                   | Description                                                                 |
+| ----------------- | ---------------------- | --------------------------------------------------------------------------- |
+| `loading`         | `boolean`              | `true` while the Battery API is initializing asynchronously.                |
+| `supported`       | `boolean`              | `true` if `navigator.getBattery` is available and supported by the browser. |
+| `level`           | `number \| undefined`  | Current battery percentage from `0` to `100`.                               |
+| `charging`        | `boolean \| undefined` | `true` if the device is currently plugged into power.                       |
+| `chargingTime`    | `number \| undefined`  | Remaining time in seconds until fully charged (`Infinity` if discharging).  |
+| `dischargingTime` | `number \| undefined`  | Remaining time in seconds until battery is empty (`Infinity` if charging).  |
+
+> The [Battery Status API](https://developer.mozilla.org/en-US/docs/Web/API/Battery_Status_API) is supported in Chromium-based browsers (Chrome, Edge, Opera) and may be unavailable or restricted in Safari and Firefox for privacy reasons.

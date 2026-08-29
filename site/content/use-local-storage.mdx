@@ -1,0 +1,82 @@
+---
+title: useLocalStorage
+description: React hook to persist state in localStorage with cross-tab synchronization, custom serializers, and reactive callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseLocalStorage />
+
+### Usage
+
+Shorthand — key + optional callback:
+
+```tsx
+import { useLocalStorage } from 'react-callback-hooks'
+
+const [theme, setTheme, removeTheme] = useLocalStorage<'light' | 'dark'>(
+  'app:theme',
+  (value) => console.log('changed to', value)
+)
+```
+
+Full props object:
+
+```tsx
+const [theme, setTheme, removeTheme] = useLocalStorage<'light' | 'dark'>({
+  key: 'app:theme',
+  defaultValue: 'light',
+  onChange: (value) => console.log('changed to', value),
+  onRemove: () => console.log('key removed')
+})
+```
+
+### Parameters
+
+#### Shorthand form
+
+| Parameter  | Type                         | Description                                                        |
+| ---------- | ---------------------------- | ------------------------------------------------------------------ |
+| `key`      | `string`                     | The `localStorage` key.                                            |
+| `onChange` | `(value: T \| null) => void` | Optional. Called on every value change, including cross-tab syncs. |
+
+#### Object form
+
+| Property       | Type                         | Default                         | Description                                                              |
+| -------------- | ---------------------------- | ------------------------------- | ------------------------------------------------------------------------ |
+| `key`          | `string`                     | —                               | The `localStorage` key.                                                  |
+| `defaultValue` | `T`                          | `null`                          | Value returned when the key does not exist.                              |
+| `serializer`   | `Serializer<T>`              | `JSON.parse` / `JSON.stringify` | Custom serializer for non-JSON values.                                   |
+| `onChange`     | `(value: T \| null) => void` | —                               | Called on every value change, including cross-tab syncs.                 |
+| `onRemove`     | `() => void`                 | —                               | Called when the key is removed via `remove()` or `localStorage.clear()`. |
+
+### Return Values
+
+Returns a tuple `[value, set, remove]`:
+
+| Index    | Type                 | Description                                                                       |
+| -------- | -------------------- | --------------------------------------------------------------------------------- |
+| `value`  | `T \| null`          | Current value. `null` when the key is absent and no `defaultValue` is set.        |
+| `set`    | `(value: T) => void` | Writes to `localStorage`, updates state, fires `onChange`.                        |
+| `remove` | `() => void`         | Deletes the key, resets to `defaultValue`, fires `onRemove` and `onChange(null)`. |
+
+### Custom Serializer
+
+```tsx
+const [count, setCount] = useLocalStorage<number>({
+  key: 'app:count',
+  defaultValue: 0,
+  serializer: {
+    read: (raw) => Number(raw),
+    write: (val) => String(val)
+  }
+})
+```
+
+### Cross-tab Sync
+
+`onChange` fires in every tab that shares the same key. No extra setup needed — the hook listens to the native `window storage` event internally.

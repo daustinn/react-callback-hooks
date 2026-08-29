@@ -1,0 +1,99 @@
+---
+title: useKeyUp
+description: React hook to listen for key release events with key combinations, element scoping, and typed callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseKeyUp />
+
+### Usage
+
+Single key or array of keys:
+
+```tsx
+import { useKeyUp } from 'react-callback-hooks'
+
+export default function App() {
+  useKeyUp('Escape', (event, key) => {
+    console.log(`${key} released`)
+  })
+
+  useKeyUp(['KeyW', 'KeyA', 'KeyS', 'KeyD'], (event, key) => {
+    console.log(`Stopped moving: ${key}`)
+  })
+}
+```
+
+Key combos and modifier shortcuts:
+
+```tsx
+import { useKeyUp } from 'react-callback-hooks'
+
+useKeyUp('Shift+Enter', (event) => {
+  console.log('Shift+Enter released')
+})
+
+useKeyUp('CtrlOrCmd+K', (event) => {
+  console.log('Shortcut released')
+})
+```
+
+Object form with `preventDefault`:
+
+```tsx
+useKeyUp('Escape', {
+  preventDefault: true,
+  onKeyUp: (event, key) => {
+    closeModal()
+  }
+})
+```
+
+Scoped to a specific element:
+
+```tsx
+export default function SearchBox() {
+  const inputRef = useKeyUp<string, HTMLInputElement>('Enter', (event, key) => {
+    console.log('Enter released in input')
+  })
+
+  return <input ref={inputRef} placeholder="Press and release Enter..." />
+}
+```
+
+### Parameters
+
+| Parameter  | Type                                     | Description                                                              |
+| ---------- | ---------------------------------------- | ------------------------------------------------------------------------ |
+| `keys`     | `K \| readonly K[]`                      | Single key, key combination, or an array of keys / combos to listen for. |
+| `callback` | `(event: KeyboardEvent, key: K) => void` | Simple form. Called when a matching key is released.                     |
+
+Object form second argument:
+
+| Property         | Type                                     | Default | Description                                                       |
+| ---------------- | ---------------------------------------- | ------- | ----------------------------------------------------------------- |
+| `onKeyUp`        | `(event: KeyboardEvent, key: K) => void` | —       | Callback fired on key release.                                    |
+| `preventDefault` | `boolean`                                | `false` | When `true`, calls `event.preventDefault()` when the key matches. |
+
+### Return Values
+
+Returns a `React.RefObject<T>`. Attach it to any element to scope the listener to that element instead of `window`.
+
+### Key Combos & Modifiers
+
+Combine modifier keys with `+` syntax:
+
+| Modifier Alias             | Description                             |
+| -------------------------- | --------------------------------------- |
+| `Ctrl` / `Control`         | Control key                             |
+| `Shift`                    | Shift key                               |
+| `Alt` / `Opt` / `Option`   | Alt / Option key                        |
+| `Meta` / `Cmd` / `Command` | Command (Mac) or Windows key            |
+| `CtrlOrCmd`                | `Ctrl` on Windows/Linux, `Cmd` on macOS |
+| `AltOrCmd`                 | `Alt` on Windows/Linux, `Cmd` on macOS  |
+| `space`                    | Space bar                               |

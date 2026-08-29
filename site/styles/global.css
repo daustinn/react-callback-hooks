@@ -1,0 +1,191 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Neuton';
+  src: url('/neuton-light.woff2') format('woff2');
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neuton';
+  src: url('/neuton-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neuton';
+  src: url('/neuton-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neuton';
+  src: url('/neuton-extrabold.woff2') format('woff2');
+  font-weight: 800;
+  font-display: swap;
+}
+
+:root {
+  --background: #fafafa;
+  --rch-100: #5f86a8;
+  --rch-200: #8db0be;
+  --rch-300: #f3e3d0;
+  --rch-400: #bb9870;
+  --border: #dddddd;
+  --foreground: #1a1a1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0c171d;
+    --rch-100: #0f3040;
+    --rch-200: #464858;
+    --rch-300: #a56f63;
+    --rch-400: #d99b7f;
+    --border: #414141;
+    --foreground: #fafafa;
+    --accent: #d99b7f;
+    --accent-secondary: #99ffe4;
+    color-scheme: dark;
+  }
+}
+
+@utility container {
+  margin: 0 auto;
+  padding: 0 1rem;
+  @apply lg:max-w-190;
+}
+
+@theme inline {
+  --color-rch-100: var(--rch-100);
+  --color-rch-200: var(--rch-200);
+  --color-rch-300: var(--rch-300);
+  --color-rch-400: var(--rch-400);
+  --font-neuton: 'Neuton', sans-serif;
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-secondary: var(--accent-secondary);
+}
+
+body {
+  background-color: var(--background);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Open Sans',
+    'Helvetica Neue',
+    sans-serif;
+}
+
+*::selection {
+  background-color: var(--rch-400);
+  color: var(--rch-100);
+}
+* {
+  border-color: var(--border);
+}
+
+.prose__content {
+  @apply text-base text-foreground/90 leading-relaxed;
+
+  p {
+    @apply leading-7 text-[15px] text-foreground/85 my-4;
+  }
+
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    &:first-child {
+      margin-top: 0 !important;
+    }
+    scroll-margin-top: 5rem;
+    @apply font-medium text-foreground tracking-tight;
+    a {
+      @apply inline-flex items-center text-foreground transition-colors;
+    }
+  }
+
+  h2 {
+    @apply text-2xl mt-12 mb-4 pb-2 border-b border-border/40;
+  }
+
+  h3 {
+    @apply text-2xl mt-8 mb-3;
+  }
+
+  h4 {
+    @apply text-xl mt-6 mb-2;
+  }
+
+  h5 {
+    @apply text-lg mt-4 mb-2;
+  }
+
+  h6 {
+    @apply text-base mt-3 mb-1 uppercase tracking-wider text-foreground/60;
+  }
+
+  ul {
+    @apply my-4 pl-5 list-disc space-y-1.5 marker:text-foreground/40;
+  }
+
+  ol {
+    @apply my-4 pl-5 list-decimal space-y-1.5 marker:text-foreground/50 marker:font-medium;
+  }
+
+  li {
+    @apply leading-7 text-[15px] text-foreground/85 pl-1;
+  }
+
+  hr {
+    @apply my-8 border-border/50;
+  }
+}
+
+.lineNumbers {
+  code {
+    counter-reset: step;
+    counter-increment: step 0;
+    font-family: monospace;
+  }
+
+  code .line::before {
+    content: counter(step);
+    counter-increment: step;
+    width: 1rem;
+    margin-right: 1rem;
+    display: inline-block;
+    text-align: center;
+    color: color-mix(in oklab, white 40%, transparent);
+  }
+}
+
+button,
+a {
+  cursor: pointer;
+}
+
+input {
+  &:focus {
+    outline: none;
+  }
+}
+
+html,
+* {
+  scrollbar-color: var(--foreground-secondary) var(--background);
+  scrollbar-width: thin;
+}

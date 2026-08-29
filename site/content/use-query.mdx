@@ -1,0 +1,83 @@
+---
+title: useQuery
+description: React hook to fetch, cache, and revalidate asynchronous data with automatic key tracking and lifecycle callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseQuery />
+
+### Usage
+
+Shorthand — key + fetcher + optional callbacks:
+
+```tsx
+import { useQuery } from 'react-callback-hooks'
+
+const [{ data, loading, error }, refetch] = useQuery(
+  'users',
+  () => fetch('/api/users').then((r) => r.json()),
+  {
+    onSuccess: (data) => console.log(data),
+    onError: (err) => console.error(err)
+  }
+)
+```
+
+Compound key — re-fetches whenever any part changes:
+
+```tsx
+const [{ data }] = useQuery(['user', userId], () =>
+  fetch(`/api/users/${userId}`).then((r) => r.json())
+)
+```
+
+Object form — full control:
+
+```tsx
+const [{ data, loading, error }, refetch] = useQuery({
+  key: ['user', userId],
+  queryFn: () => fetch(`/api/users/${userId}`).then((r) => r.json()),
+  staleTime: 30_000,
+  enabled: !!userId,
+  onSuccess: (data) => console.log(data),
+  onError: (err) => console.error(err)
+})
+```
+
+### Parameters
+
+#### Shorthand form
+
+| Parameter           | Type                     | Description                                                            |
+| ------------------- | ------------------------ | ---------------------------------------------------------------------- |
+| `key`               | `string \| string[]`     | Cache key. Array keys are joined and re-fetched when any part changes. |
+| `queryFn`           | `() => Promise<T>`       | Async function that resolves the data.                                 |
+| `options.onSuccess` | `(data: T) => void`      | Called when the fetch resolves successfully.                           |
+| `options.onError`   | `(error: Error) => void` | Called when the fetch rejects.                                         |
+
+#### Object form
+
+| Property    | Type                     | Default     | Description                                  |
+| ----------- | ------------------------ | ----------- | -------------------------------------------- |
+| `key`       | `string \| string[]`     | —           | Cache key.                                   |
+| `queryFn`   | `() => Promise<T>`       | —           | Async function that resolves the data.       |
+| `staleTime` | `number`                 | `undefined` | Ms before a cached entry is re-fetched.      |
+| `enabled`   | `boolean`                | `true`      | Set to `false` to skip fetching until ready. |
+| `onSuccess` | `(data: T) => void`      | —           | Called on successful fetch.                  |
+| `onError`   | `(error: Error) => void` | —           | Called on fetch error.                       |
+
+### Return Values
+
+Returns a tuple `[state, refetch]`:
+
+|                 | Type            | Description                                        |
+| --------------- | --------------- | -------------------------------------------------- |
+| `state.data`    | `T \| null`     | Resolved data, `null` while loading or on error.   |
+| `state.loading` | `boolean`       | `true` while a fetch is in flight.                 |
+| `state.error`   | `Error \| null` | Last error, or `null` if the last fetch succeeded. |
+| `refetch`       | `() => void`    | Forces a new fetch, bypassing the cache.           |

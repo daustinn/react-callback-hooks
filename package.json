@@ -1,0 +1,65 @@
+{
+  "name": "react-callback-hooks",
+  "description": "React hooks that react to events with callbacks.",
+  "version": "0.0.100",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "workspaces": [
+    "site"
+  ],
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "turbo run dev //#watch",
+    "watch": "tsc --watch",
+    "build": "tsc && esbuild dist/**/*.js --minify --outdir=dist --allow-overwrite",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
+    "dev:site": "turbo run dev --filter site",
+    "build:site": "bun run build && turbo run build --filter site",
+    "preview:site": "turbo run preview --filter site",
+    "lint:site": "turbo run lint --filter site"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daustinn/react-callback-hooks.git"
+  },
+  "keywords": [
+    "react",
+    "hooks",
+    "debounce",
+    "callback"
+  ],
+  "author": "Daustinn",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@swc/core": "^1.13.3",
+    "@types/react": "19.2.18",
+    "esbuild": "^0.25.9",
+    "eslint": "10.9.1",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "jsdom": "30.0.1",
+    "prettier": "3.9.6",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "turbo": "^2.5.5",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "8.68.0"
+  },
+  "packageManager": "bun@1.4.0"
+}

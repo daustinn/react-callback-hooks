@@ -1,0 +1,70 @@
+---
+title: useCache
+description: React hook for an in-memory key-value cache with TTL expiration, reactive callbacks, and type safety.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseCache />
+
+### Usage
+
+```tsx
+import { useCache } from 'react-callback-hooks'
+
+const cache = useCache<string, User>({
+  ttl: 5_000,
+  onSet: (key, value) => console.log('set', key, value),
+  onExpire: (key) => console.log('expired', key),
+  onDelete: (key) => console.log('deleted', key)
+})
+
+cache.set('user:1', { name: 'David' })
+cache.get('user:1') // User | undefined
+cache.has('user:1') // boolean
+cache.delete('user:1')
+cache.clear()
+cache.size // number
+cache.entries // ReadonlyMap<K, V>
+```
+
+Shorthand — fires on `set`:
+
+```tsx
+const cache = useCache<string, string>((key, value) => {
+  console.log('cached', key, value)
+})
+```
+
+### Parameters
+
+#### Shorthand form
+
+| Parameter | Type                         | Description                               |
+| --------- | ---------------------------- | ----------------------------------------- |
+| `onSet`   | `(key: K, value: V) => void` | Optional. Called whenever a value is set. |
+
+#### Object form
+
+| Property   | Type                         | Default     | Description                                  |
+| ---------- | ---------------------------- | ----------- | -------------------------------------------- |
+| `ttl`      | `number`                     | `undefined` | Time in ms before an entry auto-expires.     |
+| `onSet`    | `(key: K, value: V) => void` | —           | Called when a value is written.              |
+| `onExpire` | `(key: K) => void`           | —           | Called when an entry expires after `ttl` ms. |
+| `onDelete` | `(key: K) => void`           | —           | Called when `delete()` is called explicitly. |
+
+### Return Values
+
+| Property          | Type                | Description                                             |
+| ----------------- | ------------------- | ------------------------------------------------------- |
+| `get(key)`        | `V \| undefined`    | Returns the cached value or `undefined`.                |
+| `set(key, value)` | `void`              | Stores a value, restarting its TTL timer if one exists. |
+| `delete(key)`     | `void`              | Removes an entry and cancels its timer.                 |
+| `clear()`         | `void`              | Removes all entries and cancels all timers.             |
+| `has(key)`        | `boolean`           | Returns `true` if the key exists.                       |
+| `size`            | `number`            | Current number of entries.                              |
+| `entries`         | `ReadonlyMap<K, V>` | Current snapshot of the store.                          |

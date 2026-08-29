@@ -1,0 +1,57 @@
+---
+import Root from '#/layouts/root.astro'
+import ArrowRight from '#/assets/arrow-right.svg'
+
+import { getTree } from 'slugtree'
+
+const tree = getTree()
+---
+
+<Root>
+  <main class="grow">
+    <h1 class="sr-only">React Callback Hooks — documentation</h1>
+    <ul class="container overflow-hidden py-6">
+      {
+        tree.map((node, i) =>
+          node.type === 'label' ? (
+            <li
+              class="text-xs mb-2 opacity-60"
+              style={i !== 0 ? 'margin-top: 3rem' : ''}
+            >
+              {node.label}
+            </li>
+          ) : (
+            <li>
+              <a
+                href={node.href}
+                class="group flex w-fit py-1 hover:underline gap-2 items-center"
+              >
+                <h2 class="font-neuton font-semibold text-lg">{node.title}</h2>
+                <div class="text-rch-400 flex justify-end">
+                  <ArrowRight
+                    class="group-hover:translate-x-1 group-hover:-translate-y-1 -rotate-45 transition-[translate]"
+                    width={13}
+                  />
+                </div>
+              </a>
+            </li>
+          )
+        )
+      }
+    </ul>
+  </main>
+</Root>
+
+<script>
+  import { $ } from '#/lib/dom'
+
+  const $btn = $('.copy__installationButton')
+
+  $btn?.addEventListener('click', () => {
+    navigator.clipboard.writeText('bun add react-callback-hooks')
+    $btn.textContent = 'Copied!'
+    setTimeout(() => {
+      $btn.textContent = 'Copy'
+    }, 2000)
+  })
+</script>

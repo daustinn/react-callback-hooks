@@ -1,0 +1,70 @@
+---
+title: useNetworkState
+description: React hook to monitor online/offline status and Network Information API metrics with event callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseNetworkState />
+
+### Usage
+
+Simple — single callback fires on every network change:
+
+```tsx
+import { useNetworkState } from 'react-callback-hooks'
+
+const state = useNetworkState((state) => {
+  console.log('network changed', state.online)
+})
+```
+
+Object form — granular callbacks:
+
+```tsx
+const state = useNetworkState({
+  onChange: (state) => console.log('changed', state),
+  onOnline: (state) => console.log('back online'),
+  onOffline: (state) => console.log('went offline')
+})
+
+state.online // boolean
+state.effectiveType // '4g' | '3g' | '2g' | 'slow-2g' | undefined
+state.downlink // number (Mbps) | undefined
+state.rtt // number (ms)   | undefined
+state.saveData // boolean | undefined
+```
+
+> `effectiveType`, `downlink`, `rtt` and `saveData` come from the [Network Information API](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation) and are `undefined` in browsers that do not support it (Safari, Firefox).
+
+### Parameters
+
+#### Simple form
+
+| Parameter  | Type                            | Description                                                                      |
+| ---------- | ------------------------------- | -------------------------------------------------------------------------------- |
+| `callback` | `(state: NetworkState) => void` | Fires on every network change — online, offline, and connection quality changes. |
+
+#### Object form
+
+| Property    | Type                            | Description                          |
+| ----------- | ------------------------------- | ------------------------------------ |
+| `onChange`  | `(state: NetworkState) => void` | Fires on every network change.       |
+| `onOnline`  | `(state: NetworkState) => void` | Fires when the browser goes online.  |
+| `onOffline` | `(state: NetworkState) => void` | Fires when the browser goes offline. |
+
+### Return Values
+
+Returns a `NetworkState` object:
+
+| Property        | Type                                             | Description                              |
+| --------------- | ------------------------------------------------ | ---------------------------------------- |
+| `online`        | `boolean`                                        | Whether the browser has network access.  |
+| `effectiveType` | `'4g' \| '3g' \| '2g' \| 'slow-2g' \| undefined` | Estimated connection type.               |
+| `downlink`      | `number \| undefined`                            | Estimated bandwidth in Mbps.             |
+| `rtt`           | `number \| undefined`                            | Estimated round-trip time in ms.         |
+| `saveData`      | `boolean \| undefined`                           | Whether the user has enabled data saver. |

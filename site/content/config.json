@@ -1,0 +1,24 @@
+{
+  "$schema": "https://slugtree.daustinn.com/config.schema.json",
+  "nodes": [
+    "--- State & Storage ---",
+    "use-local-storage",
+    "use-debounce",
+    "use-cache",
+    "--- Data & Network ---",
+    "use-query",
+    "use-mutation",
+    "use-websocket",
+    "use-network-state",
+    "--- DOM & UI ---",
+    "use-click-outside",
+    "use-intersection-observer",
+    "use-window-size",
+    "--- Device & Input ---",
+    "use-key-down",
+    "use-key-up",
+    "use-battery",
+    "use-media-query",
+    "use-idle"
+  ]
+}

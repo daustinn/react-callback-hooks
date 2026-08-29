@@ -1,0 +1,91 @@
+---
+title: useIntersectionObserver
+description: React hook to observe element viewport visibility using Intersection Observer with threshold triggers and enter/leave callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseIntersectionObserver />
+
+### Usage
+
+Simple — single callback fires on every intersection change:
+
+```tsx
+import { useIntersectionObserver } from 'react-callback-hooks'
+
+const [ref, isVisible] = useIntersectionObserver((entry) => {
+  console.log('intersection changed', entry.isIntersecting)
+})
+
+<div ref={ref} />
+```
+
+Object form — separate enter/leave callbacks with full options:
+
+```tsx
+const [ref, isVisible] = useIntersectionObserver({
+  onEnter: (entry) => console.log('entered viewport'),
+  onLeave: (entry) => console.log('left viewport'),
+  threshold: 0.5,
+  rootMargin: '-64px 0px 0px 0px',
+  once: true,
+})
+
+<section ref={ref} />
+```
+
+### Parameters
+
+#### Simple form
+
+| Parameter | Type | Description |
+|---|---|---|
+| `callback` | `(entry: IntersectionObserverEntry) => void` | Fires on every intersection change — both enter and leave. |
+
+#### Object form
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `onEnter` | `(entry) => void` | — | Called when the element enters the viewport. |
+| `onLeave` | `(entry) => void` | — | Called when the element leaves the viewport. |
+| `threshold` | `number \| number[]` | `0` | Intersection ratio(s) at which callbacks fire. |
+| `rootMargin` | `string` | `'0px'` | Margin around the root, same syntax as CSS `margin`. |
+| `root` | `Element \| null` | `null` | Ancestor used as viewport. Defaults to the browser viewport. |
+| `once` | `boolean` | `false` | If `true`, stops observing after the first `onEnter` fires. |
+
+### Return Values
+
+Returns a tuple `[ref, isIntersecting]`:
+
+| | Type | Description |
+|---|---|---|
+| `ref` | `React.RefObject<T>` | Attach to the element you want to observe. |
+| `isIntersecting` | `boolean` | `true` while the observed element is intersecting the viewport. |
+
+### Lazy loading example
+
+```tsx
+const [ref, isVisible] = useIntersectionObserver({
+  onEnter: () => loadImage(),
+  once: true,
+  threshold: 0.1,
+})
+
+<img ref={ref} src={isVisible ? src : undefined} />
+```
+
+### Animate on scroll
+
+```tsx
+const [ref, isVisible] = useIntersectionObserver({ threshold: 0.2 })
+
+<div
+  ref={ref}
+  className={`transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+/>
+```

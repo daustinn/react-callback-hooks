@@ -1,0 +1,101 @@
+---
+title: useKeyDown
+description: React hook to listen for key presses and keyboard shortcuts with modifier combos, element scoping, and typed callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseKeyDown />
+
+### Usage
+
+Single key or array of keys:
+
+```tsx
+import { useKeyDown } from 'react-callback-hooks'
+
+export default function App() {
+  useKeyDown('Escape', () => {
+    console.log('Escape pressed')
+  })
+
+  useKeyDown(['ArrowUp', 'ArrowDown'], (event, key) => {
+    console.log(`Navigating: ${key}`)
+  })
+}
+```
+
+Key combos and modifier shortcuts:
+
+```tsx
+import { useKeyDown } from 'react-callback-hooks'
+
+// Works with Mac (Cmd+K) and Windows/Linux (Ctrl+K)
+useKeyDown('CtrlOrCmd+K', (event) => {
+  event.preventDefault()
+  openSearchDialog()
+})
+
+useKeyDown('Shift+Enter', (event) => {
+  submitForm()
+})
+```
+
+Object form with `preventDefault`:
+
+```tsx
+useKeyDown('CtrlOrCmd+S', {
+  preventDefault: true,
+  onKeyDown: (event, key) => {
+    saveDocument()
+  }
+})
+```
+
+Scoped to a specific element:
+
+```tsx
+export default function SearchBox() {
+  const inputRef = useKeyDown<string, HTMLInputElement>('Enter', () => {
+    console.log('Enter pressed inside search input')
+  })
+
+  return <input ref={inputRef} placeholder="Press Enter to search..." />
+}
+```
+
+### Parameters
+
+| Parameter  | Type                                     | Description                                                              |
+| ---------- | ---------------------------------------- | ------------------------------------------------------------------------ |
+| `keys`     | `K \| readonly K[]`                      | Single key, key combination, or an array of keys / combos to listen for. |
+| `callback` | `(event: KeyboardEvent, key: K) => void` | Simple form. Called when a matching key combination is pressed.          |
+
+Object form second argument:
+
+| Property         | Type                                     | Default | Description                                                         |
+| ---------------- | ---------------------------------------- | ------- | ------------------------------------------------------------------- |
+| `onKeyDown`      | `(event: KeyboardEvent, key: K) => void` | —       | Callback fired when a matching key is pressed.                      |
+| `preventDefault` | `boolean`                                | `false` | When `true`, automatically calls `event.preventDefault()` on match. |
+
+### Return Values
+
+Returns a `React.RefObject<T>`. When attached to an element, the keyboard listener is scoped to that element. When unused, it listens globally on `window`.
+
+### Key Combos & Modifiers
+
+Combine modifier keys with `+` syntax:
+
+| Modifier Alias             | Description                             |
+| -------------------------- | --------------------------------------- |
+| `Ctrl` / `Control`         | Control key                             |
+| `Shift`                    | Shift key                               |
+| `Alt` / `Opt` / `Option`   | Alt / Option key                        |
+| `Meta` / `Cmd` / `Command` | Command (Mac) or Windows key            |
+| `CtrlOrCmd`                | `Ctrl` on Windows/Linux, `Cmd` on macOS |
+| `AltOrCmd`                 | `Alt` on Windows/Linux, `Cmd` on macOS  |
+| `space`                    | Space bar                               |

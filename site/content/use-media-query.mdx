@@ -1,0 +1,54 @@
+---
+title: useMediaQuery
+description: React hook to listen to single or multiple CSS media queries with reactive state and match change callbacks.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseMediaQuery />
+
+### Usage
+
+Single query — returns `boolean`:
+
+```tsx
+import { useMediaQuery } from 'react-callback-hooks'
+
+const isMobile = useMediaQuery('(max-width: 768px)', (event, query) => {
+  console.log(query, 'matched')
+})
+```
+
+Array of queries — returns `Record<Q, boolean>`:
+
+```tsx
+import { useMediaQuery } from 'react-callback-hooks'
+
+const queries = ['(max-width: 768px)', '(prefers-color-scheme: dark)'] as const
+
+const mq = useMediaQuery(queries, (event, query) => {
+  // query is narrowed to one of the literal strings above
+  console.log(query, 'matched')
+})
+
+mq['(max-width: 768px)'] // boolean
+mq['(prefers-color-scheme: dark)'] // boolean
+```
+
+### Parameters
+
+| Parameter  | Type                                             | Description                                                                                                         |
+| ---------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `query`    | `string \| readonly string[]`                    | A single media query string or an array of media query strings.                                                     |
+| `callback` | `(event: MediaQueryListEvent, query: Q) => void` | Called whenever a query **starts matching**. Receives the native event and the query string that matched. Optional. |
+
+### Return Values
+
+| Overload         | Returns                                                                        |
+| ---------------- | ------------------------------------------------------------------------------ |
+| Single string    | `boolean` — `true` while the query matches.                                    |
+| Array of strings | `Record<Q, boolean>` — one boolean entry per query, keyed by the query string. |
