@@ -49,12 +49,8 @@ type CookieAttributes = {
 
 type OnChange<T> = (value: T | null) => void
 
-/** Props for the object form of `useCookie`. */
+/** Props for the options form of `useCookie`. */
 type UseCookieProps<T> = CookieAttributes & {
-  /** The cookie name. */
-  name?: string
-  /** Alias for `name`. */
-  key?: string
   /** Value returned when the cookie does not exist. @default null */
   defaultValue?: T
   /** Custom serializer. @default JSON.parse / JSON.stringify fallback */
@@ -197,83 +193,80 @@ function removeAllCookies(options: CookieAttributes = {}): void {
 }
 
 /**
- * Shorthand form — cookie name + optional change callback.
- * @param name The cookie name.
+ * Shorthand form — cookie key + optional change callback.
+ * @param key The cookie key/name.
  * @param onChange Called whenever the cookie value changes.
  * @returns `[value, set, remove, removeAll]`
  */
 function useCookie<T = string>(
-  name: string,
+  key: string,
   onChange?: OnChange<T>
 ): UseCookieReturn<T>
 
 /**
- * Object form — full configuration with default value, serializer, cookie attributes, and callbacks.
- * @param props `UseCookieProps<T>`
+ * Options form — cookie key + configuration options.
+ * @param key The cookie key/name.
+ * @param options `UseCookieProps<T>`
  * @returns `[value, set, remove, removeAll]`
  */
-function useCookie<T = string>(props: UseCookieProps<T>): UseCookieReturn<T>
+function useCookie<T = string>(
+  key: string,
+  options?: UseCookieProps<T>
+): UseCookieReturn<T>
 
 function useCookie<T = string>(
-  arg: string | UseCookieProps<T>,
-  callbackArg?: OnChange<T>
+  key: string,
+  arg2?: OnChange<T> | UseCookieProps<T>
 ): UseCookieReturn<T> {
-  const isShorthand = typeof arg === 'string'
+  const isCallback = typeof arg2 === 'function'
+  const options = isCallback ? undefined : arg2
 
-  const name = isShorthand ? arg : (arg.name ?? arg.key ?? '')
-  const defaultValue: T | null = isShorthand ? null : (arg.defaultValue ?? null)
-  const serializer: Serializer<T> = isShorthand
-    ? (defaultSerializer as Serializer<T>)
-    : ((arg.serializer ?? defaultSerializer) as Serializer<T>)
+  const defaultValue: T | null = options?.defaultValue ?? null
+  const serializer: Serializer<T> =
+    options?.serializer ?? (defaultSerializer as Serializer<T>)
 
-  const defaultOptions: CookieAttributes = isShorthand
-    ? { path: '/' }
-    : {
-        path: arg.path ?? '/',
-        domain: arg.domain,
-        expires: arg.expires,
-        maxAge: arg.maxAge,
-        secure: arg.secure,
-        sameSite: arg.sameSite,
-        partitioned: arg.partitioned
-      }
+  const defaultOptions: CookieAttributes = {
+    path: options?.path ?? '/',
+    domain: options?.domain,
+    expires: options?.expires,
+    maxAge: options?.maxAge,
+    secure: options?.secure,
+    sameSite: options?.sameSite,
+    partitioned: options?.partitioned
+  }
 
   const [value, setValue] = useState<T | null>(() => {
-    const initial = getCookie<T>(name, serializer)
+    const initial = getCookie<T>(key, serializer)
     return initial !== null ? initial : defaultValue
   })
 
+  const defaultValueRef = useRef(defaultValue)
+  const serializerRef = useRef(serializer)
   const optionsRef = useRef(defaultOptions)
 
   const callbacksRef = useRef({
-    onChange: isShorthand ? callbackArg : arg.onChange,
-    onRemove: isShorthand ? undefined : arg.onRemove,
-    onRemoveAll: isShorthand ? undefined : arg.onRemoveAll
+    onChange: isCallback ? arg2 : options?.onChange,
+    onRemove: isCallback ? undefined : options?.onRemove,
+    onRemoveAll: isCallback ? undefined : options?.onRemoveAll
   })
 
   useLayoutEffect(() => {
+    defaultValueRef.current = defaultValue
+    serializerRef.current = serializer
     optionsRef.current = defaultOptions
     callbacksRef.current = {
-      onChange: isShorthand ? callbackArg : (arg as UseCookieProps<T>).onChange,
-      onRemove: isShorthand ? undefined : (arg as UseCookieProps<T>).onRemove,
-      onRemoveAll: isShorthand
-        ? undefined
-        : (arg as UseCookieProps<T>).onRemoveAll
+      onChange: isCallback ? arg2 : options?.onChange,
+      onRemove: isCallback ? undefined : options?.onRemove,
+      onRemoveAll: isCallback ? undefined : options?.onRemoveAll
     }
   })
 
   useEffect(() => {
-    if (typeof document === 'undefined' || !name) return
-
-    const stored = getCookie<T>(name, serializer)
-    if (stored !== null) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setValue(stored)
-    }
+    if (typeof document === 'undefined' || !key) return
 
     const checkCookie = () => {
-      const current = getCookie<T>(name, serializer)
-      const nextValue = current !== null ? current : defaultValue
+      const current = getCookie<T>(key, serializerRef.current)
+      const nextValue = current !== null ? current : defaultValueRef.current
       setValue((prev) => {
         if (prev !== nextValue) {
           callbacksRef.current.onChange?.(nextValue)
@@ -290,48 +283,45 @@ function useCookie<T = string>(
       window.removeEventListener('focus', checkCookie)
       document.removeEventListener('visibilitychange', checkCookie)
     }
-  }, [name, defaultValue, serializer])
+  }, [key])
 
   const set = useCallback(
     (newValue: T, options?: CookieAttributes) => {
       try {
         const mergedOptions = { ...optionsRef.current, ...options }
-        setCookie<T>(name, newValue, mergedOptions, serializer)
+        setCookie<T>(key, newValue, mergedOptions, serializerRef.current)
         setValue(newValue)
         callbacksRef.current.onChange?.(newValue)
         // eslint-disable-next-line no-empty
       } catch {}
     },
-    [name, serializer]
+    [key]
   )
 
   const remove = useCallback(
     (options?: CookieAttributes) => {
       try {
         const mergedOptions = { ...optionsRef.current, ...options }
-        removeCookie(name, mergedOptions)
-        setValue(defaultValue)
+        removeCookie(key, mergedOptions)
+        setValue(defaultValueRef.current)
         callbacksRef.current.onRemove?.()
         callbacksRef.current.onChange?.(null)
         // eslint-disable-next-line no-empty
       } catch {}
     },
-    [name, defaultValue]
+    [key]
   )
 
-  const removeAll = useCallback(
-    (options?: CookieAttributes) => {
-      try {
-        const mergedOptions = { ...optionsRef.current, ...options }
-        removeAllCookies(mergedOptions)
-        setValue(defaultValue)
-        callbacksRef.current.onRemoveAll?.()
-        callbacksRef.current.onChange?.(null)
-        // eslint-disable-next-line no-empty
-      } catch {}
-    },
-    [defaultValue]
-  )
+  const removeAll = useCallback((options?: CookieAttributes) => {
+    try {
+      const mergedOptions = { ...optionsRef.current, ...options }
+      removeAllCookies(mergedOptions)
+      setValue(defaultValueRef.current)
+      callbacksRef.current.onRemoveAll?.()
+      callbacksRef.current.onChange?.(null)
+      // eslint-disable-next-line no-empty
+    } catch {}
+  }, [])
 
   return [value, set, remove, removeAll]
 }
