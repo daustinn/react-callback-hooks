@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/daustinn/react-callback-hooks/compare/react-callback-hooks-v0.3.0...react-callback-hooks-v0.3.1) (2026-09-03)
+
+
+### Bug Fixes
+
+* **hooks:** fix loop on default value and update useCookie signature ([e07777e](https://github.com/daustinn/react-callback-hooks/commit/e07777e2ad5a1c157e9757af54b6a2fa79916999))
+
 ## [0.3.0](https://github.com/daustinn/react-callback-hooks/compare/react-callback-hooks-v0.2.0...react-callback-hooks-v0.3.0) (2026-09-03)
 
 
