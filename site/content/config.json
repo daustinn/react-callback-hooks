@@ -3,6 +3,7 @@
   "nodes": [
     "--- State & Storage ---",
     "use-local-storage",
+    "use-cookie",
     "use-debounce",
     "use-cache",
     "--- Data & Network ---",

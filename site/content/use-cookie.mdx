@@ -1,0 +1,79 @@
+---
+title: useCookie
+description: React hook to manage browser cookies with reactive callbacks, add, update, remove, and clear operations.
+---
+
+```bash
+pnpm add react-callback-hooks
+```
+
+### Demo
+
+<UseCookie />
+
+### Usage
+
+Shorthand — name + optional callback:
+
+```tsx
+import { useCookie } from 'react-callback-hooks'
+
+const [auth, setAuth, removeAuth, removeAll] = useCookie<string>(
+  'auth_token',
+  (value) => console.log('auth changed to', value)
+)
+```
+
+Full props object:
+
+```tsx
+const [theme, setTheme, removeTheme, removeAll] = useCookie<'light' | 'dark'>({
+  name: 'app_theme',
+  defaultValue: 'light',
+  path: '/',
+  maxAge: 86400 * 30, // 30 days
+  sameSite: 'lax',
+  secure: true,
+  onChange: (value) => console.log('theme changed to', value),
+  onRemove: () => console.log('cookie removed'),
+  onRemoveAll: () => console.log('all cookies removed')
+})
+```
+
+### Parameters
+
+#### Shorthand form
+
+| Parameter  | Type                         | Description                                     |
+| ---------- | ---------------------------- | ----------------------------------------------- |
+| `name`     | `string`                     | The cookie name.                                |
+| `onChange` | `(value: T \| null) => void` | Optional. Called whenever cookie value changes. |
+
+#### Object form
+
+| Property       | Type                          | Default                       | Description                                            |
+| -------------- | ----------------------------- | ----------------------------- | ------------------------------------------------------ |
+| `name`         | `string`                      | —                             | The cookie name (alias: `key`).                        |
+| `defaultValue` | `T`                           | `null`                        | Value returned when cookie does not exist.             |
+| `path`         | `string`                      | `'/'`                         | Cookie path.                                           |
+| `domain`       | `string`                      | —                             | Cookie domain.                                         |
+| `expires`      | `Date \| number \| string`    | —                             | Expiration date or days.                               |
+| `maxAge`       | `number`                      | —                             | Max age in seconds.                                    |
+| `sameSite`     | `'strict' \| 'lax' \| 'none'` | —                             | SameSite attribute policy.                             |
+| `secure`       | `boolean`                     | —                             | Transmit only over HTTPS.                              |
+| `partitioned`  | `boolean`                     | —                             | Partitioned cookie (CHIPS).                            |
+| `serializer`   | `Serializer<T>`               | JSON parse/stringify fallback | Custom serializer for non-string values.               |
+| `onChange`     | `(value: T \| null) => void`  | —                             | Called on every value change or update.                |
+| `onRemove`     | `() => void`                  | —                             | Called when cookie is removed via `remove()`.          |
+| `onRemoveAll`  | `() => void`                  | —                             | Called when all cookies are removed via `removeAll()`. |
+
+### Return Values
+
+Returns a tuple `[value, set, remove, removeAll]`:
+
+| Index       | Type                                             | Description                                                                        |
+| ----------- | ------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| `value`     | `T \| null`                                      | Current cookie value. `null` when absent and no `defaultValue` is set.             |
+| `set`       | `(value: T, options?: CookieAttributes) => void` | Sets or updates the cookie, updates state, and fires `onChange`.                   |
+| `remove`    | `(options?: CookieAttributes) => void`           | Deletes the cookie, resets to `defaultValue`, and fires `onRemove`.                |
+| `removeAll` | `(options?: CookieAttributes) => void`           | Deletes all accessible cookies, resets to `defaultValue`, and fires `onRemoveAll`. |

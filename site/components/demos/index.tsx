@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createElement, type ComponentType } from 'react'
 import { hydrateRoot, createRoot } from 'react-dom/client'
 import UseDebounce from './use-debounce'
@@ -7,6 +7,7 @@ import UseKeyDown from './use-key-down'
 import UseKeyUp from './use-key-up'
 import UseMediaQuery from './use-media-query'
 import UseLocalStorage from './use-local-storage'
+import UseCookie from './use-cookie'
 import UseCache from './use-cache'
 import UseQuery from './use-query'
 import UseMutation from './use-mutation'
@@ -24,6 +25,7 @@ export const demoComponents: Record<string, ComponentType<any>> = {
   UseKeyUp,
   UseMediaQuery,
   UseLocalStorage,
+  UseCookie,
   UseCache,
   UseQuery,
   UseMutation,
