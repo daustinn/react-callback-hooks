@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/daustinn/react-callback-hooks/compare/react-callback-hooks-v0.2.0...react-callback-hooks-v0.3.0) (2026-09-03)
+
+
+### Features
+
+* **hooks:** add useCookie hook ([5f071bb](https://github.com/daustinn/react-callback-hooks/commit/5f071bb9a11e34a4aeb0cc26a8cde545f42568d2))
+
 ## [0.2.0](https://github.com/daustinn/react-callback-hooks/compare/react-callback-hooks-v0.1.0...react-callback-hooks-v0.2.0) (2026-08-29)
 
 
