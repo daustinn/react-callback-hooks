@@ -13,7 +13,7 @@ pnpm add react-callback-hooks
 
 ### Usage
 
-Shorthand — name + optional callback:
+Shorthand — key + optional callback:
 
 ```tsx
 import { useCookie } from 'react-callback-hooks'
@@ -24,36 +24,42 @@ const [auth, setAuth, removeAuth, removeAll] = useCookie<string>(
 )
 ```
 
-Full props object:
+Options form — key + options object:
 
 ```tsx
-const [theme, setTheme, removeTheme, removeAll] = useCookie<'light' | 'dark'>({
-  name: 'app_theme',
-  defaultValue: 'light',
-  path: '/',
-  maxAge: 86400 * 30, // 30 days
-  sameSite: 'lax',
-  secure: true,
-  onChange: (value) => console.log('theme changed to', value),
-  onRemove: () => console.log('cookie removed'),
-  onRemoveAll: () => console.log('all cookies removed')
-})
+const [theme, setTheme, removeTheme, removeAll] = useCookie<'light' | 'dark'>(
+  'app_theme',
+  {
+    defaultValue: 'light',
+    path: '/',
+    maxAge: 86400 * 30, // 30 days
+    sameSite: 'lax',
+    secure: true,
+    onChange: (value) => console.log('theme changed to', value),
+    onRemove: () => console.log('cookie removed'),
+    onRemoveAll: () => console.log('all cookies removed')
+  }
+)
 ```
 
 ### Parameters
 
-#### Shorthand form
+#### Signature
 
-| Parameter  | Type                         | Description                                     |
-| ---------- | ---------------------------- | ----------------------------------------------- |
-| `name`     | `string`                     | The cookie name.                                |
-| `onChange` | `(value: T \| null) => void` | Optional. Called whenever cookie value changes. |
+```tsx
+useCookie<T>(key: string, onChange?: (value: T | null) => void)
+useCookie<T>(key: string, options?: UseCookieProps<T>)
+```
 
-#### Object form
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `key` | `string` | The cookie key/name. |
+| `optionsOrOnChange` | `((value: T \| null) => void) \| UseCookieProps<T>` | Optional. Callback or options object. |
+
+#### Options (`UseCookieProps<T>`)
 
 | Property       | Type                          | Default                       | Description                                            |
 | -------------- | ----------------------------- | ----------------------------- | ------------------------------------------------------ |
-| `name`         | `string`                      | —                             | The cookie name (alias: `key`).                        |
 | `defaultValue` | `T`                           | `null`                        | Value returned when cookie does not exist.             |
 | `path`         | `string`                      | `'/'`                         | Cookie path.                                           |
 | `domain`       | `string`                      | —                             | Cookie domain.                                         |
