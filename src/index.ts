@@ -1,4 +1,4 @@
-﻿import useDebounce from './use-debounce.js'
+import useDebounce from './use-debounce.js'
 import useBattery from './use-battery.js'
 import useKeyDown, { defineKeys } from './use-key-down.js'
 import useKeyUp from './use-key-up.js'
@@ -13,6 +13,12 @@ import useIdle from './use-idle.js'
 import useClickOutside from './use-click-outside.js'
 import useWebSocket from './use-websocket.js'
 import useWindowSize from './use-window-size.js'
+import useCookie, {
+  getCookie,
+  setCookie,
+  removeCookie,
+  removeAllCookies
+} from './use-cookie.js'
 
 export {
   useDebounce,
@@ -30,5 +36,10 @@ export {
   useIdle,
   useClickOutside,
   useWebSocket,
-  useWindowSize
+  useWindowSize,
+  useCookie,
+  getCookie,
+  setCookie,
+  removeCookie,
+  removeAllCookies
 }

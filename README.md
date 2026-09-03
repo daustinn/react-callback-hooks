@@ -110,6 +110,7 @@ export function DropdownMenu() {
 | `useKeyDown` | Listens for specific key combinations and keyboard events |
 | `useKeyUp` | Handles keyboard key release events |
 | `useLocalStorage` | Synchronizes state with browser `localStorage` and storage events |
+| `useCookie` | Synchronizes state with browser cookies with add, update, remove, and removeAll methods |
 | `useMediaQuery` | Subscribes to responsive CSS media queries |
 | `useIntersectionObserver` | Observes element visibility and viewport intersection |
 | `useNetworkState` | Monitors online/offline network connectivity status |
