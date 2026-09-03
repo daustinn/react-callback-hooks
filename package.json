@@ -28,6 +28,7 @@
     "format:check": "prettier --check src/",
     "dev:site": "turbo run dev --filter site",
     "build:site": "bun run build && turbo run build --filter site",
+    "build:website": "bun run build:site",
     "preview:site": "turbo run preview --filter site",
     "lint:site": "turbo run lint --filter site"
   },
